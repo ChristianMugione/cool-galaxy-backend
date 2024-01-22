@@ -72,7 +72,7 @@ const deleteUser = async (req, res) => {
 const userLogin = async (req, res) => {
   //si existe user chequear pass, si OK devolver status 200 y token
   const { username, password } = req.body;
-  // console.log(username, " está intentando ingresar con pass: ", password);
+  console.log(username, " está intentando ingresar con pass: ", password);
   try {
     const user = await pool.query("SELECT * FROM users WHERE username = $1", [
       username,
