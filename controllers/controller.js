@@ -9,7 +9,7 @@ const {
   PGUSER,
 } = process.env;
 const { Pool } = require("pg");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const auth = require("./auth");
 
 const pool = new Pool({
