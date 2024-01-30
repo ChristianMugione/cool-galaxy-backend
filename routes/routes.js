@@ -14,6 +14,10 @@ const {
 
 const { authMiddleware } = require("../controllers/auth");
 
+router.get("/", (req, res) => {
+  res.send("hola");
+});
+
 router.post("/login", userLogin);
 router.post("/token", verifyTokens);
 
