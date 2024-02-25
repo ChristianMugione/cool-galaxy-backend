@@ -15,7 +15,7 @@ const {
 const { authMiddleware } = require("../controllers/auth");
 
 router.get("/", (req, res) => {
-  res.send("hola");
+  res.send("Backend de Cool Galaxy");
 });
 
 router.post("/login", userLogin);
