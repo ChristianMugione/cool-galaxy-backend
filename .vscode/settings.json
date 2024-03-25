@@ -1,3 +1,30 @@
 {
-  "liveServer.settings.port": 5501
+  "liveServer.settings.port": 5501,
+  "sqltools.connections": [
+    {
+      "pgOptions": {
+        "ssl": {
+          "rejectUnauthorized": false
+        }
+      },
+      "previewLimit": 50,
+      "server": "ep-morning-poetry-33271917.us-east-2.aws.neon.tech",
+      "port": 5432,
+      "driver": "PostgreSQL",
+      "name": "Digital365",
+      "database": "news",
+      "username": "fl0user",
+      "password": "5n7gTputhyLS"
+    },
+    {
+      "previewLimit": 50,
+      "server": "localhost",
+      "port": 5432,
+      "askForPassword": true,
+      "driver": "PostgreSQL",
+      "name": "localhost",
+      "database": "cgdb",
+      "username": "postgres"
+    }
+  ]
 }

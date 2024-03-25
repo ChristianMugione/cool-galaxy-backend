@@ -30,6 +30,8 @@ const comparePasswords = async (inputPass, hashedPass) => {
 const authMiddleware = (req, res, next) => {
   const token = req.headers.authorization;
 
+  // console.log("Autorizado", req);
+
   if (!token) {
     return res
       .status(401)
@@ -47,9 +49,19 @@ const authMiddleware = (req, res, next) => {
   }
 };
 
+const adminAuthMiddleware = (req, res, next) => {
+  const username = req.body.username;
+  console.log("username: ", username);
+
+  if (!username == "kricho") {
+    return res.status(401).json({ message: "Only admins" });
+  }
+};
+
 module.exports = {
   generateToken,
   verifyToken,
   comparePasswords,
   authMiddleware,
+  adminAuthMiddleware,
 };
