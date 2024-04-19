@@ -2,3 +2,4 @@ vars.env
 node_modules
 todo.txt
 generate.js
+*.sql

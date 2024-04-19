@@ -41,7 +41,7 @@ const asignPlanetToUser = async (planet, user) => {
   //on planet info
   try {
     const updatePlanetList = await pool.query(
-      "UPDATE planets SET planet_name = 'Unnamed', owner_id = $1 WHERE id = $2",
+      "UPDATE planets SET planet_name = 'Planet of $1', owner_id = $1, population = 100, houses= 25 WHERE id = $2",
       [user, planet]
     );
     response = { ...response, updatedPlanetInfo: "Ok" };
