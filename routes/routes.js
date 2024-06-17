@@ -13,6 +13,7 @@ const {
   userLogin,
   verifyTokens,
   generateUniverse,
+  getInitialData,
 } = require("../controllers/controller");
 
 const { authMiddleware, adminAuthMiddleware } = require("../controllers/auth");
@@ -27,6 +28,7 @@ router.post("/createuser", createUser);
 
 router.use(authMiddleware);
 
+router.get("/initialdata/:id", getInitialData);
 router.get("/users", getUsers);
 router.get("/users/:id", getUserById);
 router.get("/planets/:id", getPlanetsByUserId);

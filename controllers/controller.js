@@ -50,8 +50,14 @@ const generateUniverse = async () => {
 };
 
 const getUsers = async (req, res) => {
-  const response = await pool.query("SELECT * FROM users");
-  res.status(200).json(response.rows);
+  try {
+    const response = await pool.query("SELECT * FROM users");
+    console.log(response.rows);
+    res.status(200).json(response.rows);
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({ error: error });
+  }
 };
 
 const getUserById = async (req, res) => {
@@ -166,6 +172,22 @@ const verifyTokens = async (req, res) => {
   }
 };
 
+const getInitialData = async (req, res) => {
+  const id = req.params.id;
+  try {
+    const response = await pool.query(
+      "SELECT * FROM planets WHERE owner_id = $1",
+      [id]
+    );
+    const data = await response.rows;
+    console.log(`Send initial data to user ${id}`);
+    res.status(200).json(data);
+  } catch (error) {
+    console.error("Error in getInitialData: ", error);
+    res.status(400).json({ error: "Failed getInitialData" });
+  }
+};
+
 module.exports = {
   generateUniverse,
   getUsers,
@@ -177,4 +199,5 @@ module.exports = {
   deleteUser,
   userLogin,
   verifyTokens,
+  getInitialData,
 };
