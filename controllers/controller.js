@@ -63,19 +63,27 @@ const getUsers = async (req, res) => {
 const getUserById = async (req, res) => {
   const id = req.params.id;
   const response = await pool.query("SELECT * FROM users WHERE id = $1", [id]);
+  console.log(response.rows);
   res.json(response.rows);
 };
 
 const getPlanetsByUserId = async (req, res) => {
   const id = req.params.id;
-  const response = await pool.query("SELECT planets FROM users WHERE id = $1", [
-    id,
-  ]);
-  // console.log("response", response);
-  const data = await response.rows;
-  // console.log("data", data);
-  console.log(data[0].planets);
-  res.status(200).json(data[0].planets);
+
+  try {
+    const response = await pool.query(
+      "SELECT planets FROM users WHERE id = $1",
+      [id]
+    );
+    // console.log("response", response);
+    const data = await response.rows;
+    // console.log("data", data);
+    console.log(data[0].planets);
+    res.status(200).json(data[0].planets);
+  } catch (error) {
+    console.log("Error in getPlanetsByUserId: ", error);
+    res.status(400).json({ error: error });
+  }
 };
 
 const getNewPlanet = async (req, res) => {
@@ -180,7 +188,8 @@ const getInitialData = async (req, res) => {
       [id]
     );
     const data = await response.rows;
-    console.log(`Send initial data to user ${id}`);
+    console.log(`Send initial data to user ${id}
+      data: ${data}`);
     res.status(200).json(data);
   } catch (error) {
     console.error("Error in getInitialData: ", error);

@@ -1,4 +1,4 @@
-require("dotenv").config({ path: "../vars.env" });
+require("dotenv").config({ path: "./vars.env" });
 const {
   DATABASE_URL,
   PGDATABASE,

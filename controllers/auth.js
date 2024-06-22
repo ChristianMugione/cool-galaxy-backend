@@ -1,6 +1,8 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const secretKey = "J^NFJPz&A^n5YP0s";
+const dotenv = require("dotenv").config({ path: "./vars.env" });
+
+const secretKey = process.env.SECRET_KEY;
 
 const generateToken = (user) => {
   // console.log("--- Funcion generateToken, user: ", user.rows[0].id);
@@ -50,12 +52,14 @@ const authMiddleware = (req, res, next) => {
 };
 
 const adminAuthMiddleware = (req, res, next) => {
-  const username = req.body.username;
-  console.log("username: ", username);
+  const username = req.headers.username;
 
   if (!username == "kricho") {
+    console.log("Only admins OK");
     return res.status(401).json({ message: "Only admins" });
   }
+
+  next();
 };
 
 module.exports = {
