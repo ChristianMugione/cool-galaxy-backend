@@ -190,6 +190,11 @@ const getInitialData = async (req, res) => {
     const data = await response.rows;
     console.log(`Send initial data to user ${id}
       data: ${data}`);
+    //convert data.population to integer
+    for (let i = 0; i < data.length; i++) {
+      data[i].population = parseInt(data[i].population);
+    }
+
     res.status(200).json(data);
   } catch (error) {
     console.error("Error in getInitialData: ", error);
