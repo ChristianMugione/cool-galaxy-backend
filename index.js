@@ -1,8 +1,11 @@
 require("dotenv").config({ path: "./vars.env" });
 const { PORT } = process.env;
 const express = require("express");
+const readline = require("readline");
 const pg = require("pg");
 const cors = require("cors");
+const { getUserById } = require("./controllers/cliController.js");
+const { getUsers } = require("./controllers/cliController.js");
 // const https = require("https");
 // const fs = require("fs");
 app = express();
@@ -41,3 +44,35 @@ console.log(`Server on ${PORT}`);
 // httpsServer.listen(443, () => {
 //   console.log("Servidor HTTPS corriendo en el puerto 443");
 // });
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+
+rl.on("line", (input) => {
+  const [command, ...args] = input.split(" ");
+  switch (command) {
+    case "exit":
+      console.log("Bye!");
+      break;
+    case "userlist":
+      console.log("User list");
+      const asyncFnc = async () => {
+        const userListRes = await getUsers();
+        console.log(userListRes);
+      };
+      asyncFnc();
+      break;
+    case "user":
+      console.log("User");
+      const asyncFnc2 = async () => {
+        const userRes = await getUserById(args[0]);
+        console.log(userRes);
+      };
+      asyncFnc2();
+      break;
+    default:
+      break;
+  }
+});

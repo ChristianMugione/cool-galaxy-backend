@@ -25,11 +25,11 @@ router.get("/", (req, res) => {
 router.post("/login", userLogin);
 router.post("/token", verifyTokens);
 router.post("/createuser", createUser);
+router.get("/users", getUsers);
 
 router.use(authMiddleware);
 
 router.get("/initialdata/:id", getInitialData);
-router.get("/users", getUsers);
 router.get("/users/:id", getUserById);
 router.get("/planets/:id", getPlanetsByUserId);
 router.get("/newplanet/:id", getNewPlanet);

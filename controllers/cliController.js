@@ -1,26 +1,19 @@
 require("dotenv").config({ path: "./vars.env" });
 const {
   DATABASE_URL,
-  DB_URI,
   PGDATABASE,
   PGHOST,
   PGPASSWORD,
   PGPORT,
   PGSSLMODE,
   PGUSER,
-  DB_HOST,
-  DB_USER,
-  DB_DB,
-  DB_PASSWORD,
-  DB_PORT,
-  DB_SSLMODE,
 } = process.env;
 const { Pool } = require("pg");
 const bcrypt = require("bcryptjs");
 const auth = require("./auth");
 const { getListOfEmptyPlanets, asignPlanetToUser } = require("./auxiliarFnc");
 
-const poolold = new Pool({
+const pool = new Pool({
   host: PGHOST,
   user: PGUSER,
   database: PGDATABASE,
@@ -31,19 +24,6 @@ const poolold = new Pool({
   // ssl: {
   //   rejectUnauthorized: false,
   // },
-});
-
-const pool = new Pool({
-  host: DB_HOST,
-  user: DB_USER,
-  database: DB_DB,
-  password: DB_PASSWORD,
-  port: DB_PORT,
-  sslmode: DB_SSLMODE,
-  ssl: {
-    rejectUnauthorized: true,
-    ca: process.env.DB_CA_CERT,
-  },
 });
 
 const generateUniverse = async () => {
@@ -69,23 +49,20 @@ const generateUniverse = async () => {
   // }
 };
 
-const getUsers = async (req, res) => {
+const getUsers = async () => {
   try {
     const response = await pool.query("SELECT * FROM users");
     console.log(response.rows);
-    res.status(200).json(response.rows);
+    return response.rows;
   } catch (error) {
     console.error(error);
-    res.status(400).json({ error: error });
   }
 };
 
-const getUserById = async (req, res) => {
-  const id = req.params.id;
+const getUserById = async (id) => {
   const response = await pool.query("SELECT * FROM users WHERE id = $1", [id]);
   console.log(response.rows);
-  res.json(response.rows);
-  // return response.rows;
+  return response.rows;
 };
 
 const getPlanetsByUserId = async (req, res) => {
