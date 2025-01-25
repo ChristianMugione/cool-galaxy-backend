@@ -26,33 +26,10 @@ const pool = new Pool({
   // },
 });
 
-const generateUniverse = async () => {
-  console.log("Generate Universe");
-  //create SS's
-  //create planets
-  // console.log("Running generateUniverse");
-  // for (let solarsystem = 1; solarsystem < 100; solarsystem++) {
-  //   let planetList = [];
-  //   for (let planet = 1; planet < 5; planet++) {
-  //     const responsePlanet = await pool.query(
-  //       "INSERT INTO planets (planet_name, owner_id) VALUES ($1, $2) RETURNING id",
-  //       ["", null]
-  //     );
-  //     console.log("responsePlanet: ", responsePlanet);
-  //     planetList.push(responsePlanet.rows[0].id);
-  //   }
-  //   const response = await pool.query(
-  //     "INSERT INTO solar_systems (name, planet_list) VALUES ($1, $2)",
-  //     ["", planetList]
-  //   );
-  //   console.log("response: ", response);
-  // }
-};
-
 const getUsers = async () => {
   try {
     const response = await pool.query("SELECT * FROM users");
-    console.log(response.rows);
+    // console.log(response.rows);
     return response.rows;
   } catch (error) {
     console.error(error);
@@ -61,7 +38,7 @@ const getUsers = async () => {
 
 const getUserById = async (id) => {
   const response = await pool.query("SELECT * FROM users WHERE id = $1", [id]);
-  console.log(response.rows);
+  // console.log(response.rows);
   return response.rows;
 };
 
@@ -198,6 +175,29 @@ const getInitialData = async (req, res) => {
     console.error("Error in getInitialData: ", error);
     res.status(400).json({ error: "Failed getInitialData" });
   }
+};
+
+const generateUniverse = async () => {
+  console.log("Generate Universe");
+  //create SS's
+  //create planets
+  // console.log("Running generateUniverse");
+  // for (let solarsystem = 1; solarsystem < 100; solarsystem++) {
+  //   let planetList = [];
+  //   for (let planet = 1; planet < 5; planet++) {
+  //     const responsePlanet = await pool.query(
+  //       "INSERT INTO planets (planet_name, owner_id) VALUES ($1, $2) RETURNING id",
+  //       ["", null]
+  //     );
+  //     console.log("responsePlanet: ", responsePlanet);
+  //     planetList.push(responsePlanet.rows[0].id);
+  //   }
+  //   const response = await pool.query(
+  //     "INSERT INTO solar_systems (name, planet_list) VALUES ($1, $2)",
+  //     ["", planetList]
+  //   );
+  //   console.log("response: ", response);
+  // }
 };
 
 module.exports = {

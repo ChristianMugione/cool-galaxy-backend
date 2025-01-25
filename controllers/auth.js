@@ -5,7 +5,6 @@ const dotenv = require("dotenv").config({ path: "./vars.env" });
 const secretKey = process.env.SECRET_KEY;
 
 const generateToken = (user) => {
-  // console.log("--- Funcion generateToken, user: ", user.rows[0].id);
   return jwt.sign(
     {
       userId: user.rows[0].id,
@@ -18,21 +17,18 @@ const generateToken = (user) => {
 
 const verifyToken = (token) => {
   try {
-    return jwt.verify(token, secretKey);
+    const tokenVerified = jwt.verify(token, secretKey);
+
+    return tokenVerified;
   } catch (error) {
-    console.error("Error: ", error);
+    console.error("VerifyToken error: ", error);
+
     return null;
   }
 };
 
-const comparePasswords = async (inputPass, hashedPass) => {
-  return await bcrypt.compare(inputPass, hashedPass);
-};
-
 const authMiddleware = (req, res, next) => {
   const token = req.headers.authorization;
-
-  // console.log("Autorizado", req);
 
   if (!token) {
     return res
@@ -42,7 +38,9 @@ const authMiddleware = (req, res, next) => {
 
   try {
     const user = verifyToken(token);
+
     req.user = user;
+
     next();
   } catch (error) {
     return res
@@ -52,14 +50,19 @@ const authMiddleware = (req, res, next) => {
 };
 
 const adminAuthMiddleware = (req, res, next) => {
-  const username = req.headers.username;
+  const userId = req.user.userId;
 
-  if (!username == "kricho") {
-    console.log("Only admins OK");
+  if (userId !== 1) {
     return res.status(401).json({ message: "Only admins" });
   }
 
   next();
+};
+
+// AUXILIAR FUNCTIONS
+
+const comparePasswords = async (inputPass, hashedPass) => {
+  return await bcrypt.compare(inputPass, hashedPass);
 };
 
 module.exports = {

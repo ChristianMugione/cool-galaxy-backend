@@ -34,8 +34,12 @@ app.options("*", cors());
 app.use(require("./routes/routes.js"));
 
 //Abro servidor
-app.listen(PORT);
-console.log(`Server on ${PORT}`);
+try {
+  app.listen(PORT);
+  console.log(`Server on ${PORT}`);
+} catch (error) {
+  console.error("ERROR opening server: ", error);
+}
 
 // Crear el servidor HTTPS
 // const httpsServer = https.createServer(credentials, app);
@@ -53,26 +57,43 @@ const rl = readline.createInterface({
 rl.on("line", (input) => {
   const [command, ...args] = input.split(" ");
   switch (command) {
-    case "exit":
-      console.log("Bye!");
+    case "help":
+      console.log("Commands: userlist, user [id]");
+
       break;
+
     case "userlist":
       console.log("User list");
       const asyncFnc = async () => {
         const userListRes = await getUsers();
-        console.log(userListRes);
+        if (userListRes) {
+          userListRes.forEach((user) => {
+            console.log(
+              user.id,
+              user.username,
+              user.email,
+              user.planets.length
+            );
+          });
+        }
       };
       asyncFnc();
       break;
     case "user":
-      console.log("User");
+      console.log("User", args[0]);
       const asyncFnc2 = async () => {
         const userRes = await getUserById(args[0]);
         console.log(userRes);
+
+        console.log("Id: ", userRes[0].id);
+        console.log("Username: ", userRes[0].username);
+        console.log("Email: ", userRes[0].email);
+        console.log("Planets: ", userRes[0].planets.length);
       };
       asyncFnc2();
       break;
     default:
+      console.log("Invalid command");
       break;
   }
 });

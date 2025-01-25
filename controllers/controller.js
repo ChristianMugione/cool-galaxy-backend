@@ -107,27 +107,46 @@ const getPlanetsByUserId = async (req, res) => {
   }
 };
 
+//This function get a random empty planet and give it to a new user
 const getNewPlanet = async (req, res) => {
   const userId = req.params.id;
 
-  const listOfEmptyPlanets = await getListOfEmptyPlanets();
+  try {
+    const response = await pool.query(
+      "SELECT * FROM planets WHERE owner_id = $1",
+      [userId]
+    );
 
-  //take a random number
-  const selectedPlanetId = Math.floor(
-    Math.random() * (listOfEmptyPlanets.length + 1)
-  );
+    if (response.rows.length === 0) {
+      console.log("El usuario no tiene planetas");
 
-  const asignPlanetToUserResult = asignPlanetToUser(selectedPlanetId, userId);
+      try {
+        const listOfEmptyPlanets = await getListOfEmptyPlanets();
 
-  res.status(200).json({
-    message: `Planet ${selectedPlanetId} has been assigned to user ${userId}`,
-    asignPlanetToUserResult,
-  });
-  //if list have less than 80 add more planets
-  //select random empty planet
-  //asign these planet to user
-  //return planet id
-  //SELECT mi_array[3] FROM mi_tabla WHERE id = 1;
+        //take a random number
+        const selectedPlanetId = Math.floor(
+          Math.random() * (listOfEmptyPlanets.length + 1)
+        );
+
+        const asignPlanetToUserResult = asignPlanetToUser(
+          selectedPlanetId,
+          userId
+        );
+
+        res.status(200).json({
+          message: `Planet ${selectedPlanetId} has been assigned to user ${userId}`,
+          asignPlanetToUserResult,
+        });
+      } catch (error) {
+        console.log("Error in getNewPlanet: ", error);
+        res.status(400).json({ error: error });
+      }
+    }
+  } catch (error) {
+    const errorText = `Error trying to check if user have planets: ${error}`;
+    console.log(errorText);
+    res.status(400).json({ error: errorText });
+  }
 };
 
 const createUser = async (req, res) => {
@@ -163,23 +182,29 @@ const deleteUser = async (req, res) => {
 const userLogin = async (req, res) => {
   //si existe user chequear pass, si OK devolver status 200 y token
   const { username, password } = req.body;
+  console.log("username: ", username);
+  console.log("password: ", password);
 
   try {
     const user = await pool.query("SELECT * FROM users WHERE username = $1", [
       username,
     ]);
 
-    if (
-      !user ||
-      !(await auth.comparePasswords(password, user.rows[0].password))
-    ) {
-      return res.status(401).send({ message: "Wrong password" });
+    if (!user) {
+      console.log("User not found");
+
+      return res.status(401).send({ ok: false, message: "Not user" });
+    }
+
+    if (!(await auth.comparePasswords(password, user.rows[0].password))) {
+      return res.status(401).send({ ok: false, message: "Wrong password" });
     }
     const userId = user.rows[0].id;
     const token = auth.generateToken(user);
-    res.send({ token, userId });
+    res.send({ ok: true, token, userId });
   } catch (error) {
-    return res.status(401).send({ message: "User not found" });
+    console.error("Error in userLogin: ", error);
+    return res.status(401).send({ ok: false, message: "User not found" });
   }
 };
 
@@ -223,6 +248,24 @@ const getInitialData = async (req, res) => {
   }
 };
 
+const updatePlanet = async (req, res) => {
+  const id = req.params.id;
+
+  const { userId, newName } = req.body;
+  console.log("req.body", req.body);
+
+  const response = await pool.query(
+    "UPDATE planets SET planet_name = $1 WHERE id = $2 AND owner_id = $3",
+    [newName, id, userId]
+  );
+  console.log(response);
+
+  res.status(200).json({
+    message: `Planet ${id} has been updated`,
+    data: response,
+  });
+};
+
 module.exports = {
   generateUniverse,
   getUsers,
@@ -235,4 +278,5 @@ module.exports = {
   userLogin,
   verifyTokens,
   getInitialData,
+  updatePlanet,
 };
