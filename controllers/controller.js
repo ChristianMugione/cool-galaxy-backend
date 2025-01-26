@@ -197,6 +197,8 @@ const userLogin = async (req, res) => {
     }
 
     if (!(await auth.comparePasswords(password, user.rows[0].password))) {
+      console.log("Wrong password");
+
       return res.status(401).send({ ok: false, message: "Wrong password" });
     }
     const userId = user.rows[0].id;
