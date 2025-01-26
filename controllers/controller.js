@@ -20,7 +20,7 @@ const bcrypt = require("bcryptjs");
 const auth = require("./auth");
 const { getListOfEmptyPlanets, asignPlanetToUser } = require("./auxiliarFnc");
 
-const poolold = new Pool({
+const pool = new Pool({
   host: PGHOST,
   user: PGUSER,
   database: PGDATABASE,
@@ -33,7 +33,8 @@ const poolold = new Pool({
   // },
 });
 
-const pool = new Pool({
+const aivenRemotePool = new Pool({
+  //aiven: https://console.aiven.io/
   host: DB_HOST,
   user: DB_USER,
   database: DB_DB,
@@ -268,6 +269,44 @@ const updatePlanet = async (req, res) => {
   });
 };
 
+const migratedb = async () => {
+  const tables = [
+    "cargo_ships",
+    "planets",
+    "solar_systems",
+    "users",
+    "constructions",
+    "fleets",
+    "planets_backup",
+  ];
+  tables.forEach(async (table) => {
+    try {
+      const response = await pool.query(`SELECT * FROM ${table}`);
+      const rows = response.rows;
+
+      for (const row of rows) {
+        const columns = Object.keys(row).join(", ");
+        console.log("columns: ", columns);
+
+        const values = Object.values(row);
+        console.log("values: ", values);
+
+        const placeholders = values
+          .map((_, index) => `$${index + 1}`)
+          .join(", ");
+        console.log("placeholders: ", placeholders);
+
+        await localPool.query(
+          `INSERT INTO ${table} (${columns}) VALUES (${placeholders}) ON CONFLICT DO NOTHING`,
+          values
+        );
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  });
+};
+
 module.exports = {
   generateUniverse,
   getUsers,
@@ -281,4 +320,5 @@ module.exports = {
   verifyTokens,
   getInitialData,
   updatePlanet,
+  migratedb,
 };
