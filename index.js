@@ -6,6 +6,7 @@ const pg = require("pg");
 const cors = require("cors");
 const { getUserById } = require("./controllers/cliController.js");
 const { getUsers } = require("./controllers/cliController.js");
+const { migratedb } = require("./controllers/controller.js");
 // const https = require("https");
 // const fs = require("fs");
 app = express();
@@ -91,6 +92,11 @@ rl.on("line", (input) => {
         console.log("Planets: ", userRes[0].planets.length);
       };
       asyncFnc2();
+      break;
+    case "migratebd":
+      console.log("NO Migrating database (disabled)");
+      //migratedb();
+
       break;
     default:
       console.log("Invalid command");
