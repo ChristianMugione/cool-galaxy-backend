@@ -160,7 +160,7 @@ const createUser = async (req, res) => {
     );
     res.status(200).json(response);
   } catch (err) {
-    console.error("Error creating user. Please contact tu hermana");
+    console.error("Error creating user: ", err);
   }
 };
 
