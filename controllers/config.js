@@ -2,13 +2,6 @@ require("dotenv").config({ path: "./vars.env" });
 const { Pool } = require("pg");
 
 const {
-  DB_URI,
-  PGDATABASE,
-  PGHOST,
-  PGPASSWORD,
-  PGPORT,
-  PGSSLMODE,
-  PGUSER,
   DB_HOST,
   DB_USER,
   DB_DB,

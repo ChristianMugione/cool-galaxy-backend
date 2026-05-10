@@ -21,12 +21,12 @@ const auth = require("./auth");
 const { getListOfEmptyPlanets, asignPlanetToUser } = require("./auxiliarFnc");
 
 const pool = new Pool({
-  host: PGHOST,
-  user: PGUSER,
-  database: PGDATABASE,
-  password: PGPASSWORD,
-  port: PGPORT,
-  sslmode: PGSSLMODE,
+  host: DB_HOST,
+  user: DB_USER,
+  database: DB_DB,
+  password: DB_PASSWORD,
+  port: DB_PORT,
+  sslmode: DB_SSLMODE,
   ssl: false,
   // ssl: {
   //   rejectUnauthorized: false,
