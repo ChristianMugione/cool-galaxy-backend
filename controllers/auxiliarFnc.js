@@ -1,4 +1,4 @@
-require("dotenv").config({ path: "./vars.env" });
+require("dotenv").config();
 const {
   DB_URI,
   PGDATABASE,
@@ -23,10 +23,10 @@ const pool = new Pool({
   password: DB_PASSWORD,
   port: DB_PORT,
   sslmode: DB_SSLMODE,
-  ssl: {
-    rejectUnauthorized: true,
-    ca: process.env.DB_CA_CERT,
-  },
+  //ssl: {
+  //  rejectUnauthorized: true,
+  //  ca: process.env.DB_CA_CERT,
+  //},
 });
 
 const getListOfEmptyPlanets = async () => {
