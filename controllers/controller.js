@@ -1,6 +1,5 @@
-require("dotenv").config({ path: "./vars.env" });
+require("dotenv").config();
 const {
-  DATABASE_URL,
   DB_URI,
   PGDATABASE,
   PGHOST,
@@ -20,18 +19,33 @@ const bcrypt = require("bcryptjs");
 const auth = require("./auth");
 const { getListOfEmptyPlanets, asignPlanetToUser } = require("./auxiliarFnc");
 
-const pool = new Pool({
-  host: PGHOST,
-  user: PGUSER,
-  database: PGDATABASE,
-  password: PGPASSWORD,
-  port: PGPORT,
-  sslmode: PGSSLMODE,
-  ssl: false,
-  // ssl: {
-  //   rejectUnauthorized: false,
-  // },
-});
+console.log("DB_HOST: ", DB_HOST);
+console.log("DB_USER: ", DB_USER);
+console.log("DB_DB: ", DB_DB);
+console.log("DB_PASSWORD: ", DB_PASSWORD);
+console.log("DB_PORT: ", DB_PORT);
+console.log("DB_SSLMODE: ", DB_SSLMODE);
+
+const getPool = () => {
+  try {
+    return new Pool({
+      host: DB_HOST,
+      user: DB_USER,
+      database: DB_DB,
+      password: DB_PASSWORD,
+      port: DB_PORT,
+      sslmode: DB_SSLMODE,
+      //ssl: false,
+      // ssl: {
+      //   rejectUnauthorized: false,
+      // },
+    });
+  } catch (error) {
+    console.error("Error creating pool: ", error);
+  }
+};
+
+const pool = getPool();
 
 const aivenRemotePool = new Pool({
   //aiven: https://console.aiven.io/
@@ -118,11 +132,11 @@ const getNewPlanet = async (req, res) => {
       [userId]
     );
 
-    if (response.rows.length === 0) {
+    if (response?.rows?.length === 0) {
       console.log("El usuario no tiene planetas");
 
       try {
-        const listOfEmptyPlanets = await getListOfEmptyPlanets();
+        const listOfEmptyPlanets = await getListOfEmptyPlanets() || [];
 
         //take a random number
         const selectedPlanetId = Math.floor(

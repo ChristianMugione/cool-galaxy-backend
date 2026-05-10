@@ -1,12 +1,11 @@
-require("dotenv").config({ path: "./vars.env" });
+require("dotenv").config();
 const {
-  DATABASE_URL,
-  PGDATABASE,
-  PGHOST,
-  PGPASSWORD,
-  PGPORT,
-  PGSSLMODE,
-  PGUSER,
+  DB_DB,
+  DB_HOST,
+  DB_USER,
+  DB_PASSWORD,
+  DB_PORT,
+  DB_SSLMODE,
 } = process.env;
 const { Pool } = require("pg");
 const bcrypt = require("bcryptjs");
@@ -14,12 +13,12 @@ const auth = require("./auth");
 const { getListOfEmptyPlanets, asignPlanetToUser } = require("./auxiliarFnc");
 
 const pool = new Pool({
-  host: PGHOST,
-  user: PGUSER,
-  database: PGDATABASE,
-  password: PGPASSWORD,
-  port: PGPORT,
-  sslmode: PGSSLMODE,
+  host: DB_HOST,
+  user: DB_USER,
+  database: DB_DB,
+  password: DB_PASSWORD,
+  port: DB_PORT,
+  sslmode: DB_SSLMODE,
   ssl: false,
   // ssl: {
   //   rejectUnauthorized: false,
@@ -178,26 +177,37 @@ const getInitialData = async (req, res) => {
 };
 
 const generateUniverse = async () => {
-  console.log("Generate Universe");
+  //console.log("Generate Universe");
   //create SS's
   //create planets
-  // console.log("Running generateUniverse");
-  // for (let solarsystem = 1; solarsystem < 100; solarsystem++) {
-  //   let planetList = [];
-  //   for (let planet = 1; planet < 5; planet++) {
-  //     const responsePlanet = await pool.query(
-  //       "INSERT INTO planets (planet_name, owner_id) VALUES ($1, $2) RETURNING id",
-  //       ["", null]
-  //     );
-  //     console.log("responsePlanet: ", responsePlanet);
-  //     planetList.push(responsePlanet.rows[0].id);
-  //   }
-  //   const response = await pool.query(
-  //     "INSERT INTO solar_systems (name, planet_list) VALUES ($1, $2)",
-  //     ["", planetList]
-  //   );
-  //   console.log("response: ", response);
-  // }
+  console.log("Running generateUniverse");
+  for (let solarsystem = 1; solarsystem < 100; solarsystem++) {
+    let planetList = [];
+    for (let planet = 1; planet < 5; planet++) {
+      const responsePlanet = await pool.query(
+        "INSERT INTO planets (planet_name, owner_id) VALUES ($1, $2) RETURNING id",
+        ["", null]
+      );
+      console.log("responsePlanet: ", responsePlanet);
+      planetList.push(responsePlanet.rows[0].id);
+    }
+    const response = await pool.query(
+      "INSERT INTO solar_systems (name, planet_list) VALUES ($1, $2)",
+      ["", planetList]
+    );
+    console.log("response: ", response);
+  }
+};
+
+const getPlanetList = async () => {
+  try {
+    const response = await pool.query("SELECT * FROM planets");
+    const data = await response.rows;
+    return data;
+  } catch (error) {
+    console.error("Error in getPlanetList: ", error);
+    throw new Error("Failed to get planet list");
+  }
 };
 
 module.exports = {
@@ -206,6 +216,7 @@ module.exports = {
   getUserById,
   getPlanetsByUserId,
   getNewPlanet,
+  getPlanetList,
   createUser,
   updateUser,
   deleteUser,

@@ -1,11 +1,11 @@
-require("dotenv").config({ path: "./vars.env" });
+require("dotenv").config();
 const { PORT } = process.env;
 const express = require("express");
 const readline = require("readline");
 const pg = require("pg");
 const cors = require("cors");
 const { getUserById } = require("./controllers/cliController.js");
-const { getUsers } = require("./controllers/cliController.js");
+const { getUsers, generateUniverse, getPlanetList } = require("./controllers/cliController.js");
 const { migratedb } = require("./controllers/controller.js");
 // const https = require("https");
 // const fs = require("fs");
@@ -75,11 +75,15 @@ rl.on("line", (input) => {
               user.email,
               user.planets.length
             );
+            user.planets.map((planet) => {
+              console.log("  - ", planet);
+            });
           });
         }
       };
       asyncFnc();
       break;
+    
     case "user":
       console.log("User", args[0]);
       const asyncFnc2 = async () => {
@@ -93,11 +97,37 @@ rl.on("line", (input) => {
       };
       asyncFnc2();
       break;
+
     case "migratebd":
       console.log("NO Migrating database (disabled)");
       //migratedb();
 
       break;
+
+    case "generateplanets":
+      console.log("Generating planets (universe)");
+      generateUniverse();
+
+      break;
+
+      case "planetlist":
+        console.log("Getting planet list");
+        const asyncFnc3 = async () => {
+          const planetListRes = await getPlanetList();
+          if (planetListRes) {
+            planetListRes.forEach((planet) => {
+              console.log(
+                planet.id,
+                planet.planet_name,
+                planet.owner_id,
+                planet.population,
+                planet.houses
+              );
+            });
+          }
+        };
+        asyncFnc3();
+        break;
     default:
       console.log("Invalid command");
       break;

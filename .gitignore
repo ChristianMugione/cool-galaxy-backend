@@ -1,4 +1,4 @@
-vars.env
+.env
 node_modules
 todo.txt
 generate.js
